@@ -7,6 +7,7 @@ export const News = onlineStore.define('news', {
   id: {type: DataType.INTEGER, primaryKey: true, autoIncrement: true},
   title: {type: DataType.STRING},
   text: {type: DataType.STRING},
+  img: {type: DataType.STRING},
 })
 
 export const User = onlineStore.define(
@@ -78,5 +79,5 @@ User.belongsTo(Tariffs)
 User.hasOne(Score)
 Score.belongsTo(User)
 
-User.hasOne(Role)
-Role.belongsTo(User)
+Role.hasMany(User)
+User.belongsTo(Role)
