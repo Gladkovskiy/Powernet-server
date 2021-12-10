@@ -5,9 +5,9 @@ import path from 'path'
 import cors from 'cors'
 
 //конфигурация подключения к БД
-// import onlineStore from './db.js'
+import onlineStore from './db.js'
 //настройка таблиц в базе данных
-// import * as models from './models/models.js'
+import * as models from './models/models.js'
 
 import router from './routes/index.js'
 import errorHandler from './middleware/ErrorHandling.js'
@@ -43,8 +43,8 @@ app.use(errorHandler)
 
 const start = async () => {
   try {
-    // await onlineStore.authenticate() //подключить БД
-    // await onlineStore.sync() //для создания схем БД
+    await onlineStore.authenticate() //подключить БД
+    await onlineStore.sync() //для создания схем БД
     app.listen(PORT, () => console.log(`Start on port ${PORT}`))
   } catch (error) {
     console.log(error)
