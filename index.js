@@ -44,7 +44,7 @@ app.use(errorHandler)
 const start = async () => {
   try {
     await onlineStore.authenticate() //подключить БД
-    await onlineStore.sync() //для создания схем БД
+    await onlineStore.sync({alter: false}) //для создания схем БД alter: true изменяет модель ДБ(без пересоздания)
     app.listen(PORT, () => console.log(`Start on port ${PORT}`))
   } catch (error) {
     console.log(error)

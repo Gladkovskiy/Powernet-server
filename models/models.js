@@ -76,7 +76,7 @@ export const AdditionalServices = onlineStore.define(
 Tariffs.hasMany(User)
 User.belongsTo(Tariffs)
 
-User.hasOne(Score)
+User.hasOne(Score, {onDelete: 'CASCADE'})
 Score.belongsTo(User)
 
 Role.hasMany(User)
