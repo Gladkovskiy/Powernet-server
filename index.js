@@ -30,7 +30,7 @@ app.use('/api', router)
 //для nginx делаем /image чтобы в настройках прописать раздачу статики
 
 // а в react добавляем в путь эту приставку
-// app.use('/image', express.static(path.resolve(path.resolve(), './static')))
+app.use('/image', express.static(path.resolve(path.resolve(), './static')))
 
 //статическая раздача frontend(для nginx не надо, там идёт проксирование)
 /* app.use(express.static(path.resolve(path.resolve(), '../client/build')))

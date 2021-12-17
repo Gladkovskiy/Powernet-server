@@ -24,15 +24,15 @@ const roleVerify = role => {
 
       //если токена нет то пшим сообщение не авторизирован
       if (jwtToken === 'null') {
-        next(ApiError.unauthorized('Пользователь не авторизован'))
+        return next(ApiError.unauthorized('Пользователь не авторизован'))
       }
 
-      //декодируем токен получаем id, email, role
+      //декодируем токен получаем id, login, role
       const decoded = jwt.verify(jwtToken, process.env.SECRET_KEY)
-
+      console.log(decoded.role)
       //забераем role из декодированого токена
       if (decoded.role !== role) {
-        next(ApiError.forbidden('У вас нет доступа'))
+        return next(ApiError.forbidden('У вас нет доступа'))
       }
 
       next()

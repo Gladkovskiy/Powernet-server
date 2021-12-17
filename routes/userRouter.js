@@ -6,10 +6,11 @@ import {
   deleteUser,
   updateUser,
 } from '../controllers/userController.js'
+import checkRoleMiddleware from '../middleware/checkRoleMiddleware.js'
 
 const router = new express.Router()
 
-router.post('/', createUser)
+router.post('/', checkRoleMiddleware('ADMIN'), createUser)
 router.get('/', getUser)
 router.delete('/', deleteUser)
 router.put('/', updateUser)

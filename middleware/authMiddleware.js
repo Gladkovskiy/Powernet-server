@@ -23,10 +23,10 @@ const tokenValid = (req, res, next) => {
 
     //если токена нет то пшим сообщение не авторизирован
     if (jwtToken === 'null') {
-      next(ApiError.unauthorized('Пользователь не авторизован'))
+      return next(ApiError.unauthorized('Пользователь не авторизован'))
     }
 
-    //декодируем токен получаем id, email, role
+    //декодируем токен получаем id, login, role
     const decoded = jwt.verify(jwtToken, process.env.SECRET_KEY)
 
     //добавляем в запрос и передаём в userController
