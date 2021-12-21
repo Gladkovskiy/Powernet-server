@@ -79,7 +79,11 @@ export const getAllNews = async (req, res, next) => {
     limit = limit || 10
     let offset = (page - 1) * limit
 
-    const news = await News.findAndCountAll({limit, offset})
+    const news = await News.findAndCountAll({
+      limit,
+      offset,
+      order: [['updatedAt', 'DESC']],
+    })
 
     res.status(200).json(news)
   } catch (e) {
