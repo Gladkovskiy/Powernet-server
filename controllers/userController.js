@@ -2,6 +2,9 @@ import express from 'express'
 import ApiError from '../error/ApiError.js'
 import {User, Score, Tariffs, Role} from '../models/models.js'
 import bcrypt from 'bcrypt'
+import sequelize from 'sequelize'
+
+const Op = sequelize.Op
 
 /**
  *
@@ -12,8 +15,14 @@ export const createUser = async (req, res, next) => {
   try {
     let {fio, adress, ip, login, password, tariffId, roleId, value, active} =
       req.body
-    const hashPassword = await bcrypt.hash(password, 5)
 
+    const findUser = await User.findOne({where: {[Op.or]: [{login}, {ip}]}})
+    if (findUser)
+      return next(
+        ApiError.badRequest('Запись с таким логином или ip уже существует')
+      )
+
+    const hashPassword = await bcrypt.hash(password, 5)
     const user = await User.create({
       fio,
       adress,
@@ -41,12 +50,40 @@ export const getUser = async (req, res, next) => {
     let {id} = req.query
 
     const user = await User.findOne({
-      where: {id},
-      attributes: ['fio', 'adress', 'ip', 'tariffId'],
+      where: {[Op.or]: [{ip: id}, {fio: id}]},
+      // attributes: ['id', 'fio', 'adress', 'ip', 'tariffId'],
       include: [
-        {model: Score, attributes: ['value', 'active']},
+        {model: Role, attributes: ['type']},
         {model: Tariffs, attributes: ['name']},
       ],
+    })
+
+    if (user === null)
+      return next(ApiError.badRequest('Такой пользователь не найден'))
+
+    res.json(user)
+  } catch (e) {
+    next(ApiError.badRequest(e.message))
+  }
+}
+
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const getAllUser = async (req, res, next) => {
+  try {
+    let {ipOrName} = req.params
+    console.log(ipOrName)
+    const user = await User.findAll({
+      where: {
+        [Op.or]: [
+          {ip: {[Op.startsWith]: ipOrName}},
+          {fio: {[Op.startsWith]: ipOrName}},
+        ],
+      },
+      attributes: ['id', 'fio', 'ip'],
     })
 
     res.json(user)
@@ -88,17 +125,18 @@ export const updateUser = async (req, res, next) => {
       password,
       tariffId,
       roleId,
-      value,
-      active,
+      // value,
+      // active,
     } = req.body
     let update = false
 
     const hashPassword = await bcrypt.hash(password, 5)
+
     const user = await User.update(
       {fio, adress, ip, login, password: hashPassword, tariffId, roleId},
       {where: {id}}
     )
-    await Score.update({value, active}, {where: {userId: id}})
+    // await Score.update({value, active}, {where: {userId: id}})
     if (user[0] === 1) update = true
 
     res.status(200).json(update)
