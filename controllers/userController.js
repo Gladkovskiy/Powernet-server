@@ -47,7 +47,7 @@ export const createUser = async (req, res, next) => {
  */
 export const getUser = async (req, res, next) => {
   try {
-    let {id} = req.query
+    let {id} = req.params
 
     const user = await User.findOne({
       where: {[Op.or]: [{ip: id}, {fio: id}]},
@@ -74,7 +74,9 @@ export const getUser = async (req, res, next) => {
  */
 export const getAllUser = async (req, res, next) => {
   try {
-    let {ipOrName} = req.params
+    let {ipOrName} = req.query
+
+    if (ipOrName === '') return res.json([])
     console.log(ipOrName)
     const user = await User.findAll({
       where: {

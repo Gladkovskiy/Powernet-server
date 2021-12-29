@@ -13,8 +13,8 @@ const router = new express.Router()
 
 // router.post('/', checkRoleMiddleware('ADMIN'), createUser)
 router.post('/', createUser)
-router.get('/', getUser)
-router.get('/:ipOrName', getAllUser)
+router.get('/:id', getUser)
+router.get('/', getAllUser)
 router.delete('/', deleteUser)
 router.put('/', updateUser)
 
