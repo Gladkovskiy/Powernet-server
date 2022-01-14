@@ -77,7 +77,7 @@ export const getAllUser = async (req, res, next) => {
     let {ipOrName} = req.query
 
     if (ipOrName === '') return res.json([])
-    console.log(ipOrName)
+
     const user = await User.findAll({
       where: {
         [Op.or]: [

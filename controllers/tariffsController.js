@@ -1,6 +1,6 @@
 import express from 'express'
 import ApiError from '../error/ApiError.js'
-import {Tariffs} from '../models/models.js'
+import {Tariffs, AdditionalServices} from '../models/models.js'
 
 /**
  *
@@ -26,7 +26,7 @@ export const createTariffs = async (req, res, next) => {
  */
 export const getTariffs = async (req, res, next) => {
   try {
-    const tariffs = await Tariffs.findAll()
+    const tariffs = await Tariffs.findAll({order: [['price']]})
 
     res.json(tariffs)
   } catch (e) {
@@ -67,6 +67,37 @@ export const updateTariffs = async (req, res, next) => {
     if (tariffs[0] === 1) update = true
 
     res.status(200).json(update)
+  } catch (e) {
+    next(ApiError.badRequest(e.message))
+  }
+}
+
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const getOneTariff = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const tariff = await Tariffs.findOne({where: {id}})
+
+    res.json(tariff)
+  } catch (e) {
+    next(ApiError.badRequest(e.message))
+  }
+}
+
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const getServices = async (req, res, next) => {
+  try {
+    const services = await AdditionalServices.findOne()
+
+    res.json(services)
   } catch (e) {
     next(ApiError.badRequest(e.message))
   }
