@@ -6,7 +6,7 @@ const DataType = sequelize.DataTypes
 export const News = onlineStore.define('news', {
   id: {type: DataType.INTEGER, primaryKey: true, autoIncrement: true},
   title: {type: DataType.STRING},
-  text: {type: DataType.STRING},
+  text: {type: DataType.STRING(3000)},
   img: {type: DataType.STRING},
 })
 

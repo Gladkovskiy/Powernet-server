@@ -1,4 +1,5 @@
 import express from 'express'
+import checkRoleMiddleware from '../middleware/checkRoleMiddleware.js'
 
 import {
   createNews,
@@ -10,9 +11,9 @@ import {
 
 const router = new express.Router()
 
-router.post('/', createNews)
-router.put('/', updateNews)
-router.delete('/', deleteNews)
+router.post('/', checkRoleMiddleware('ADMIN'), createNews)
+router.put('/', checkRoleMiddleware('ADMIN'), updateNews)
+router.delete('/', checkRoleMiddleware('ADMIN'), deleteNews)
 router.get('/', getAllNews)
 router.get('/:id', getOneNews)
 

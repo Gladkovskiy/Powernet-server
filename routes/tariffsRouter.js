@@ -1,5 +1,5 @@
 import express from 'express'
-
+import checkRoleMiddleware from '../middleware/checkRoleMiddleware.js'
 import {
   createTariffs,
   getTariffs,
@@ -11,11 +11,11 @@ import {
 
 const router = new express.Router()
 
-router.post('/', createTariffs)
+router.post('/', checkRoleMiddleware('ADMIN'), createTariffs)
 router.get('/', getTariffs)
 router.get('/:id', getOneTariff)
 router.get('/services/price', getServices)
-router.delete('/', deleteTariffs)
-router.put('/', updateTariffs)
+router.delete('/', checkRoleMiddleware('ADMIN'), deleteTariffs)
+router.put('/', checkRoleMiddleware('ADMIN'), updateTariffs)
 
 export default router

@@ -72,6 +72,33 @@ export const getUser = async (req, res, next) => {
  * @param {express.Request} req
  * @param {express.Response} res
  */
+export const getUserForId = async (req, res, next) => {
+  try {
+    let {id} = req.params
+
+    const user = await User.findOne({
+      where: {id},
+
+      include: [
+        {model: Role, attributes: ['type']},
+        {model: Tariffs, attributes: ['name']},
+      ],
+    })
+
+    if (user === null)
+      return next(ApiError.badRequest('Такой пользователь не найден'))
+
+    res.json(user)
+  } catch (e) {
+    next(ApiError.badRequest(e.message))
+  }
+}
+
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
 export const getAllUser = async (req, res, next) => {
   try {
     let {ipOrName} = req.query
@@ -127,18 +154,24 @@ export const updateUser = async (req, res, next) => {
       password,
       tariffId,
       roleId,
-      // value,
-      // active,
+      editPassword,
     } = req.body
     let update = false
-
+    let user
     const hashPassword = await bcrypt.hash(password, 5)
 
-    const user = await User.update(
-      {fio, adress, ip, login, password: hashPassword, tariffId, roleId},
-      {where: {id}}
-    )
-    // await Score.update({value, active}, {where: {userId: id}})
+    if (editPassword) {
+      user = await User.update(
+        {fio, adress, ip, login, password: hashPassword, tariffId, roleId},
+        {where: {id}}
+      )
+    } else {
+      user = await User.update(
+        {fio, adress, ip, login, tariffId, roleId},
+        {where: {id}}
+      )
+    }
+
     if (user[0] === 1) update = true
 
     res.status(200).json(update)
